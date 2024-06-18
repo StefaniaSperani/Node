@@ -1,4 +1,5 @@
 body {
+    background-color: cornflowerblue;
     color: #333333;
     font-family: arial;
     max-width: 650px;
@@ -15,7 +16,7 @@ body {
 }
 
 footer {
-    color: #888888;
+    color: #ffffff;
     border-top: 1px solid #eeeeee;
     margin-top: 16px;
     padding: 16px 0;
@@ -32,11 +33,26 @@ h1 {
 }
 
 header a {
-    color: #888888;
+    color: #ffffff;
     margin-right: 16px;
     text-decoration: none;
 }
 
 .portrait {
     width: 250px;
+}
+
+input{
+    border: 1px solid  #cccccc;
+    padding: 8px;
+    border-radius: 10px;
+}
+
+button{
+    cursor: pointer;
+    border: 1px solid #888888;
+    background-color: #888888;
+    padding: 8px;
+    color: #fff;
+    border-radius: 10px;
 }
