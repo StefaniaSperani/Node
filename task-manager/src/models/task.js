@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
 
-// Definizione dello schema per il modello
-const Task = mongoose.model('Task', {
+const taskSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true,
@@ -12,5 +12,8 @@ const Task = mongoose.model('Task', {
     default: false,
   },
 })
+
+// Definizione dello schema per il modello
+const Task = mongoose.model('Task', taskSchema)
 
 module.exports = Task
