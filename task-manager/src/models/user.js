@@ -51,6 +51,13 @@ const userSchema = new mongoose.Schema({
   ],
 })
 
+//serve a mongoose per capire la correlazione tra user e task
+userSchema.virtual('tasks', {
+  ref: 'Task',
+  localField: '_id',
+  foreignField: 'owner',
+})
+
 //elimino i dati che non voglio mostrare
 userSchema.methods.toJSON = function () {
   const user = this
@@ -73,6 +80,7 @@ userSchema.methods.generateAuthToken = async function () {
   return token
 }
 
+//cerco con le credenziali se è presente nel db
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email })
 
@@ -90,7 +98,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user
 }
 
-//Creo un has della password prima di salvare
+//Creo un hash della password prima di salvare
 userSchema.pre('save', async function (next) {
   const user = this
 

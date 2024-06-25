@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcryptjs')
 
-const taskSchema = new mongoose.Schema({
+// Definizione dello schema per il modello
+const Task = mongoose.model('Task', {
   description: {
     type: String,
     required: true,
@@ -11,9 +11,11 @@ const taskSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
 })
-
-// Definizione dello schema per il modello
-const Task = mongoose.model('Task', taskSchema)
 
 module.exports = Task
