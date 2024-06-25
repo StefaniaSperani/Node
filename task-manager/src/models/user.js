@@ -51,6 +51,17 @@ const userSchema = new mongoose.Schema({
   ],
 })
 
+//elimino i dati che non voglio mostrare
+userSchema.methods.toJSON = function () {
+  const user = this
+  const userObject = user.toObject()
+
+  delete userObject.password
+  delete userObject.tokens
+
+  return userObject
+}
+
 //Generazione del token
 userSchema.methods.generateAuthToken = async function () {
   const user = this

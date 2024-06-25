@@ -68,25 +68,8 @@ router.get('/users/me', auth, async (req, res) => {
   res.send(req.user)
 })
 
-//prendo il singolo utente
-router.get('/users/:id', async (req, res) => {
-  const _id = req.params.id
-
-  try {
-    const user = await User.findById(_id)
-    if (!user) {
-      returnres.status(400).send()
-    }
-    res.send(user)
-  } catch (e) {
-    res.status(500).send({ error: 'Internal server error' })
-  }
-})
-
 //Aggiorno
-router.patch('/users/:id', async (req, res) => {
-  const _id = req.params.id
-
+router.patch('/users/me', auth, async (req, res) => {
   //Se vogliono fare una modifica che non è compresa nell'array allora imposto un messaggio di errore
   const updates = Object.keys(req.body)
   const allowesUpdates = ['name', 'email', 'password', 'age']
@@ -97,40 +80,22 @@ router.patch('/users/:id', async (req, res) => {
   }
 
   try {
-    //middleware
-    const user = await User.findById(_id)
-
-    updates.forEach((update) => (user[update] = req.body[update])) // le [] perchè i valori sono dinamici
-
-    await user.save()
-
-    //const user = await User.findByIdAndUpdate(_id, req.body, {
-    //   new: true,
-    //   runValidators: true,
-    // })
-    if (!user) {
-      return res.status(404).send()
-    }
-    res.send(user)
+    updates.forEach((update) => (req.user[update] = req.body[update])) // le [] perchè i valori sono dinamici
+    await req.user.save()
+    res.send(req.user)
   } catch (e) {
     res.status(400).send(e)
   }
 })
 
 //Cancello
-router.delete('/users/:id', async (req, res) => {
-  const _id = req.params.id
-
+router.delete('/users/me', auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(_id)
-
-    if (!user) {
-      return res.status(404).send()
-    }
-
-    res.send(user)
-  } catch {
-    res.status(500).send(e)
+    await req.user.deleteOne()
+    // console.log(req.user)
+    res.send(req.user)
+  } catch (e) {
+    res.status(500).send()
   }
 })
 
