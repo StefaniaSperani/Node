@@ -3,53 +3,58 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true,
-    lowercase: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error('Email is invalid')
-      }
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 7,
-    trim: true,
-    validate(value) {
-      if (value.toLowerCase().includes('password')) {
-        throw new Error('Password cannot contain "password"')
-      }
-    },
-  },
-  age: {
-    type: Number,
-    default: 0,
-    validate(value) {
-      if (value < 0) {
-        throw new Error('Age must be a postive number')
-      }
-    },
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+      lowercase: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error('Email is invalid')
+        }
       },
     },
-  ],
-})
+    password: {
+      type: String,
+      required: true,
+      minlength: 7,
+      trim: true,
+      validate(value) {
+        if (value.toLowerCase().includes('password')) {
+          throw new Error('Password cannot contain "password"')
+        }
+      },
+    },
+    age: {
+      type: Number,
+      default: 0,
+      validate(value) {
+        if (value < 0) {
+          throw new Error('Age must be a postive number')
+        }
+      },
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+)
 
 //serve a mongoose per capire la correlazione tra user e task
 userSchema.virtual('tasks', {
@@ -109,6 +114,14 @@ userSchema.pre('save', async function (next) {
 
   next()
 })
+
+//Cancello i task dell'utente quando si elimina
+// userSchema.pre('remove', async function () {
+//   console.log('remove')
+//   const user = this
+//   await Task.deleteMany({ owner: user._id })
+//   next()
+// })
 
 const User = mongoose.model('User', userSchema)
 
