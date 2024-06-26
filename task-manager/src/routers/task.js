@@ -20,17 +20,30 @@ router.post('/tasks', auth, async (req, res) => {
 
 //recupero l'intera lista dei task
 router.get('/tasks', auth, async (req, res) => {
-  // GET tasks?complete=true
+  // GET /tasks?complete=true --FILTER
   const match = {}
+  const sort = {}
 
   if (req.query.complete) {
     match.complete = req.query.complete === 'true'
+  }
+
+  if (req.query.sortBy) {
+    const parts = req.query.sortBy.split(':')
+    sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
   }
 
   try {
     await req.user.populate({
       path: 'tasks',
       match,
+      //GET /tasks?limit=10&skip=20 --PAGINATION
+      options: {
+        limit: parseInt(req.query.limit),
+        skip: parseInt(req.query.skip),
+        //GET /task?sortBy=createdAt:desc --SORT
+        sort,
+      },
     })
     res.send(req.user.tasks)
   } catch (e) {
